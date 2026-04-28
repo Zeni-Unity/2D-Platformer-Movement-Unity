@@ -1,0 +1,47 @@
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class PlayerRunState : PlayerState
+{
+    public PlayerRunState(PlayerStateMachine _sm, PlayerController _pc) : base(_sm, _pc) { }
+
+    public override void Enter()
+    {
+        base.Enter();
+        pc.animator.SetBool("isRunning", true);
+    }
+
+    public override void Update()
+    {
+        base.Update();
+
+        if (Vector2.Distance(pc.moveDir, Vector2.zero) < 0.01f) { sm.ChangeState(new PlayerIdleState(sm, pc)); }
+        if (!pc.isSprinting) { sm.ChangeState(new PlayerIdleState(sm, pc)); }
+        if (pc.isOnWall && !pc.isGrounded) sm.ChangeState(new PlayerWallSlideState(sm, pc));
+    }
+
+    public override void FixedUpdate()
+    {
+        base.FixedUpdate();
+
+        pc.rb.linearVelocity = new Vector2(pc.moveDir.x * pc.runSpeed, pc.rb.linearVelocity.y);
+    }
+
+    public override void Exit()
+    {
+        base.Exit();
+        pc.animator.SetBool("isRunning", false);
+    }
+
+    public override void Move(InputAction.CallbackContext ctx)
+    {
+        pc.moveDir = ctx.ReadValue<Vector2>();
+    }
+
+    public override void Jump(InputAction.CallbackContext ctx)
+    {
+        base.Jump(ctx);
+
+        if (ctx.performed) sm.ChangeState(new PlayerJumpState(sm, pc));
+    }
+}
