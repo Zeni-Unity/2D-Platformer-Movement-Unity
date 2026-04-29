@@ -25,7 +25,22 @@ public class PlayerWalkState : PlayerState
     {
         base.FixedUpdate();
 
-        pc.rb.linearVelocity = new Vector2(pc.moveDir.x * pc.walkSpeed, pc.rb.linearVelocity.y);
+        float targetSpeed = pc.moveDir.x * pc.walkSpeed;
+        float currentSpeed = pc.rb.linearVelocity.x;
+
+        float accel = (pc.moveDir.x != 0) ? pc.acceleration : pc.deceleration;
+
+        bool isTurning = pc.moveDir.x != 0 && Mathf.Abs(currentSpeed) > 0.1f && Mathf.Sign(pc.moveDir.x) != Mathf.Sign(currentSpeed);
+        if (isTurning) accel *= pc.turnAccelMultiplier;
+
+        float newSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, accel * Time.fixedDeltaTime);
+
+        pc.rb.linearVelocity = new Vector2(newSpeed, pc.rb.linearVelocity.y);
+
+        if (pc.isGrounded && pc.currentJumpBufferTime > 0)
+        {
+            sm.ChangeState(new PlayerJumpState(sm, pc));
+        }
     }
 
     public override void Exit()
@@ -42,7 +57,7 @@ public class PlayerWalkState : PlayerState
     public override void Jump(InputAction.CallbackContext ctx)
     {
         base.Jump(ctx);
-        if (!pc.isGrounded) return;
+        if (!pc.canJump) return;
         if (ctx.performed) sm.ChangeState(new PlayerJumpState(sm, pc));
     }
 

@@ -23,6 +23,20 @@ public class PlayerIdleState : PlayerState
         bool movingIntoWall = (pc._facingRight && pc.moveDir.x > 0.1f) || (!pc._facingRight && pc.moveDir.x < -0.1f);
 
         if (pc.isOnWall && !pc.isGrounded && movingIntoWall) sm.ChangeState(new PlayerWallSlideState(sm, pc));
+
+        if (pc.isGrounded && pc.currentJumpBufferTime > 0)
+        {
+            sm.ChangeState(new PlayerJumpState(sm, pc));
+        }
+    }
+
+    public override void FixedUpdate()
+    {
+        base.FixedUpdate();
+
+        float currentSpeed = pc.rb.linearVelocity.x;
+        float newSpeed = Mathf.MoveTowards(currentSpeed, 0f, pc.deceleration * Time.fixedDeltaTime);
+        pc.rb.linearVelocity = new Vector2(newSpeed, pc.rb.linearVelocity.y);
     }
 
     public override void Exit()
@@ -38,7 +52,7 @@ public class PlayerIdleState : PlayerState
     public override void Jump(InputAction.CallbackContext ctx)
     {
         base.Jump(ctx);
-        if (!pc.isGrounded) return;
+        if (!pc.canJump) return;
         if (ctx.performed) sm.ChangeState(new PlayerJumpState(sm, pc));
     }
 

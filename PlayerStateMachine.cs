@@ -37,6 +37,7 @@ public class PlayerStateMachine : MonoBehaviour
     public void Move(InputAction.CallbackContext ctx) => _currentState?.Move(ctx);
     public void Jump(InputAction.CallbackContext ctx)
     {
+        if (ctx.performed) pc.currentJumpBufferTime = pc.jumpBufferTime;
         _currentState?.Jump(ctx);
     }
     public void WallJump(InputAction.CallbackContext ctx)
