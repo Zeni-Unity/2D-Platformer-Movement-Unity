@@ -16,17 +16,17 @@ public class PlayerIdleState : PlayerState
         base.Update();
         if (pc.moveDir.x != 0)
         {
-            if (pc.isSprinting) sm.ChangeState(new PlayerRunState(sm, pc));
-            else sm.ChangeState(new PlayerWalkState(sm, pc));
+            if (pc.isSprinting) sm.ChangeState(sm.RunState);
+            else sm.ChangeState(sm.WalkState);
         }
 
         bool movingIntoWall = (pc._facingRight && pc.moveDir.x > 0.1f) || (!pc._facingRight && pc.moveDir.x < -0.1f);
 
-        if (pc.isOnWall && !pc.isGrounded && movingIntoWall) sm.ChangeState(new PlayerWallSlideState(sm, pc));
+        if (pc.isOnWall && !pc.isGrounded && movingIntoWall) sm.ChangeState(sm.WallSlideState);
 
         if (pc.isGrounded && pc.currentJumpBufferTime > 0)
         {
-            sm.ChangeState(new PlayerJumpState(sm, pc));
+            sm.ChangeState(sm.JumpState);
         }
     }
 
@@ -53,14 +53,14 @@ public class PlayerIdleState : PlayerState
     {
         base.Jump(ctx);
         if (!pc.canJump) return;
-        if (ctx.performed) sm.ChangeState(new PlayerJumpState(sm, pc));
+        if (ctx.performed) sm.ChangeState(sm.JumpState);
     }
 
     public override void Crouch(InputAction.CallbackContext ctx)
     {
         base.Crouch(ctx);
 
-        if (ctx.performed) sm.ChangeState(new PlayerCrouchState(sm, pc));
+        if (ctx.performed) sm.ChangeState(sm.CrouchState);
     }
 
     public override void Roll(InputAction.CallbackContext ctx)
@@ -69,6 +69,6 @@ public class PlayerIdleState : PlayerState
 
         if (pc.currentRollCooldownTimer > 0) return;
 
-        if (ctx.performed) sm.ChangeState(new PlayerRollState(sm, pc));
+        if (ctx.performed) sm.ChangeState(sm.RollState);
     }
 }

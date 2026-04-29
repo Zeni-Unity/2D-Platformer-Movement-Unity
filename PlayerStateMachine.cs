@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using NUnit.Framework.Interfaces;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,14 +8,32 @@ public class PlayerStateMachine : MonoBehaviour
     private PlayerState _currentState;
     private PlayerController pc;
 
+    public PlayerIdleState IdleState { get; private set; }
+    public PlayerWalkState WalkState { get; private set; }
+    public PlayerRunState RunState { get; private set; }
+    public PlayerJumpState JumpState { get; private set; }
+    public PlayerWallSlideState WallSlideState { get; private set; }
+    public PlayerWallJumpState WallJumpState { get; private set; }
+    public PlayerCrouchState CrouchState { get; private set; }
+    public PlayerRollState RollState { get; private set; }
+
     void Awake()
     {
         pc = GetComponent<PlayerController>();
+
+        IdleState = new PlayerIdleState(this, pc);
+        WalkState = new PlayerWalkState(this, pc);
+        RunState = new PlayerRunState(this, pc);
+        JumpState = new PlayerJumpState(this, pc);
+        WallSlideState = new PlayerWallSlideState(this, pc);
+        WallJumpState = new PlayerWallJumpState(this, pc);
+        CrouchState = new PlayerCrouchState(this, pc);
+        RollState = new PlayerRollState(this, pc);
     }
 
     void Start()
     {
-        ChangeState(new PlayerIdleState(this, pc));
+        ChangeState(IdleState);
     }
 
     public void ChangeState(PlayerState newState)
@@ -27,11 +47,11 @@ public class PlayerStateMachine : MonoBehaviour
 
     void Update()
     {
-        _currentState.Update();
+        _currentState?.Update();
     }
     void FixedUpdate()
     {
-        _currentState.FixedUpdate();
+        _currentState?.FixedUpdate();
     }
 
     public void Move(InputAction.CallbackContext ctx) => _currentState?.Move(ctx);

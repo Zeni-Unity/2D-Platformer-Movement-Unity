@@ -32,7 +32,7 @@ public class PlayerWallSlideState : PlayerState
         if (!pc.isOnWall || pc.isGrounded)
         {
             pc.isWallSliding = false;
-            sm.ChangeState(new PlayerIdleState(sm, pc));
+            sm.ChangeState(sm.IdleState);
             return;
         }
 
@@ -41,13 +41,13 @@ public class PlayerWallSlideState : PlayerState
             if (pc._facingRight && pc.moveDir.x < -0.1f)
             {
                 pc.isWallSliding = false;
-                sm.ChangeState(new PlayerIdleState(sm, pc));
+                sm.ChangeState(sm.IdleState);
                 return;
             }
             else if (!pc._facingRight && pc.moveDir.x > 0.1f)
             {
                 pc.isWallSliding = false;
-                sm.ChangeState(new PlayerIdleState(sm, pc));
+                sm.ChangeState(sm.IdleState);
                 return;
             }
         }
@@ -66,7 +66,7 @@ public class PlayerWallSlideState : PlayerState
     {
         base.WallJump(ctx);
         if (!pc.isOnWall) return;
-        if (ctx.performed) sm.ChangeState(new PlayerWallJumpState(sm, pc));
+        if (ctx.performed) sm.ChangeState(sm.WallJumpState);
     }
 
     public override void Move(InputAction.CallbackContext ctx)

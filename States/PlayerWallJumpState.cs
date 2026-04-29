@@ -29,7 +29,7 @@ public class PlayerWallJumpState : PlayerState
     private IEnumerator WallJumpEnd()
     {
         yield return new WaitForSeconds(pc.wallJumpDuration);
-        sm.ChangeState(new PlayerIdleState(sm, pc));
+        sm.ChangeState(sm.IdleState);
     }
 
     public override void Exit()
@@ -49,6 +49,6 @@ public class PlayerWallJumpState : PlayerState
 
         if (pc.currentRollCooldownTimer > 0) return;
 
-        if (ctx.performed) sm.ChangeState(new PlayerRollState(sm, pc));
+        if (ctx.performed) sm.ChangeState(sm.RollState);
     }
 }

@@ -16,9 +16,9 @@ public class PlayerWalkState : PlayerState
     {
         base.Update();
 
-        if (Vector2.Distance(pc.moveDir, Vector2.zero) < 0.01f) { sm.ChangeState(new PlayerIdleState(sm, pc)); }
-        if (pc.isSprinting) { sm.ChangeState(new PlayerRunState(sm, pc)); }
-        if (pc.isOnWall && !pc.isGrounded) sm.ChangeState(new PlayerWallSlideState(sm, pc));
+        if (Vector2.Distance(pc.moveDir, Vector2.zero) < 0.01f) { sm.ChangeState(sm.IdleState); }
+        if (pc.isSprinting) { sm.ChangeState(sm.RunState); }
+        if (pc.isOnWall && !pc.isGrounded) sm.ChangeState(sm.WallSlideState);
     }
 
     public override void FixedUpdate()
@@ -39,7 +39,7 @@ public class PlayerWalkState : PlayerState
 
         if (pc.isGrounded && pc.currentJumpBufferTime > 0)
         {
-            sm.ChangeState(new PlayerJumpState(sm, pc));
+            sm.ChangeState(sm.JumpState);
         }
     }
 
@@ -58,14 +58,14 @@ public class PlayerWalkState : PlayerState
     {
         base.Jump(ctx);
         if (!pc.canJump) return;
-        if (ctx.performed) sm.ChangeState(new PlayerJumpState(sm, pc));
+        if (ctx.performed) sm.ChangeState(sm.JumpState);
     }
 
     public override void Crouch(InputAction.CallbackContext ctx)
     {
         base.Crouch(ctx);
 
-        if (ctx.performed) sm.ChangeState(new PlayerCrouchState(sm, pc));
+        if (ctx.performed) sm.ChangeState(sm.CrouchState);
     }
 
     public override void Roll(InputAction.CallbackContext ctx)
@@ -74,6 +74,6 @@ public class PlayerWalkState : PlayerState
 
         if (pc.currentRollCooldownTimer > 0) return;
 
-        if (ctx.performed) sm.ChangeState(new PlayerRollState(sm, pc));
+        if (ctx.performed) sm.ChangeState(sm.RollState);
     }
 }

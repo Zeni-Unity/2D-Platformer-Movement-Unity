@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
     [field: SerializeField] public float ghostFrameStartOpacity { get; private set; } = 0.5f;
     [field: SerializeField] public float ghostFrameDeathTime { get; private set; } = 0.25f;
     [field: SerializeField] public float ghostFrameSpawnTime { get; private set; } = 0.05f;
+    [field: SerializeField] public Color ghostFrameColor { get; private set; } = Color.cyan;
     [Header("Ground Check")]
     [SerializeField] private float groundRadius;
     [SerializeField] private Transform groundCheckPos;

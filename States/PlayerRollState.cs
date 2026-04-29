@@ -52,7 +52,7 @@ public class PlayerRollState : PlayerState
 
         pc.rb.gravityScale = ogGravity;
 
-        sm.ChangeState(new PlayerIdleState(sm, pc));
+        sm.ChangeState(sm.IdleState);
         pc.animator.SetBool("isRolling", false);
         isRolling = false;
         yield return null;
@@ -68,7 +68,7 @@ public class PlayerRollState : PlayerState
         SpriteRenderer sr = frame.AddComponent<SpriteRenderer>();
         sr.sprite = pc.gameObject.GetComponent<SpriteRenderer>().sprite;
 
-        Color color = sr.color;
+        Color color = pc.ghostFrameColor;
         color.a = pc.ghostFrameStartOpacity;
         sr.color = color;
 

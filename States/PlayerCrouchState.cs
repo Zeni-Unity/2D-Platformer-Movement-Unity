@@ -34,14 +34,14 @@ public class PlayerCrouchState : PlayerState
     {
         base.Jump(ctx);
         if (!pc.canJump) return;
-        if (ctx.performed) sm.ChangeState(new PlayerJumpState(sm, pc));
+        if (ctx.performed) sm.ChangeState(sm.JumpState);
     }
 
     public override void Crouch(InputAction.CallbackContext ctx)
     {
         base.Crouch(ctx);
 
-        if (ctx.performed) sm.ChangeState(new PlayerIdleState(sm, pc));
+        if (ctx.performed) sm.ChangeState(sm.IdleState);
     }
 
     public override void Roll(InputAction.CallbackContext ctx)
@@ -50,6 +50,6 @@ public class PlayerCrouchState : PlayerState
 
         if (pc.currentRollCooldownTimer > 0) return;
 
-        if (ctx.performed) sm.ChangeState(new PlayerRollState(sm, pc));
+        if (ctx.performed) sm.ChangeState(sm.RollState);
     }
 }

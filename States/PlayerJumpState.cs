@@ -17,8 +17,8 @@ public class PlayerJumpState : PlayerState
     {
         base.Update();
 
-        if (pc.isGrounded) sm.ChangeState(new PlayerIdleState(sm, pc));
-        if (pc.isOnWall && !pc.isGrounded) sm.ChangeState(new PlayerWallSlideState(sm, pc));
+        if (pc.isGrounded) sm.ChangeState(sm.IdleState);
+        if (pc.isOnWall && !pc.isGrounded) sm.ChangeState(sm.WallSlideState);
     }
 
     public override void FixedUpdate()
@@ -65,6 +65,6 @@ public class PlayerJumpState : PlayerState
 
         if (pc.currentRollCooldownTimer > 0) return;
 
-        if (ctx.performed) sm.ChangeState(new PlayerRollState(sm, pc));
+        if (ctx.performed) sm.ChangeState(sm.RollState);
     }
 }
