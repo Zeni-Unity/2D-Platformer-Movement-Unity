@@ -13,10 +13,16 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask wallLayer;
 
     [field: Header("Movement Settings")]
-    [field: SerializeField] public float walkSpeed { get; private set; }
-    [field: SerializeField] public float runSpeed { get; private set; }
-    [field: SerializeField] public float jumpForce { get; private set; }
-    [field: SerializeField] public float wallSlideSpeed { get; private set; }
+    [field: SerializeField] public float walkSpeed { get; private set; } = 7f;
+    [field: SerializeField] public float runSpeed { get; private set; } = 12f;
+    [field: SerializeField] public float jumpForce { get; private set; } = 25f;
+    [field: SerializeField] public float wallSlideSpeed { get; private set; } = 0.15f;
+    [field: SerializeField] public float rollGroundSpeed { get; private set; } = 15f;
+    [field: SerializeField] public float rollGroundTime { get; private set; } = 0.2f;
+    [field: SerializeField] public float rollAirSpeed { get; private set; } = 15f;
+    [field: SerializeField] public float rollAirTime { get; private set; } = 0.2f;
+    [field: SerializeField] public float rollCooldown { get; private set; } = 0.2f;
+    [field: SerializeField] public float jumpBufferTime { get; private set; } = 0.15f;
 
     [field: Header("Wall Jump Settings")]
     [field: SerializeField] public float wallJumpTime { get; private set; } = 0.2f;
@@ -35,6 +41,7 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public bool isSprinting;
     [HideInInspector] public bool isWallSliding;
     [HideInInspector] public bool _facingRight = true;
+    [HideInInspector] public float currentRollCooldownTimer;
 
 
     void Awake()
@@ -60,6 +67,8 @@ public class PlayerController : MonoBehaviour
         {
             wallJumpCounter = Mathf.Max(0f, wallJumpCounter - Time.deltaTime);
         }
+
+        if (currentRollCooldownTimer > 0) currentRollCooldownTimer -= Time.deltaTime;
     }
 
     void GroundWallCheck()

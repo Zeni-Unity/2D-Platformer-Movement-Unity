@@ -43,4 +43,13 @@ public class PlayerCrouchState : PlayerState
 
         if (ctx.performed) sm.ChangeState(new PlayerIdleState(sm, pc));
     }
+
+    public override void Roll(InputAction.CallbackContext ctx)
+    {
+        base.Roll(ctx);
+
+        if (pc.currentRollCooldownTimer > 0) return;
+
+        if (ctx.performed) sm.ChangeState(new PlayerRollState(sm, pc));
+    }
 }

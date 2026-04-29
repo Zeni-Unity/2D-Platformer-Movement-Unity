@@ -44,4 +44,13 @@ public class PlayerRunState : PlayerState
         if (!pc.isGrounded) return;
         if (ctx.performed) sm.ChangeState(new PlayerJumpState(sm, pc));
     }
+
+    public override void Roll(InputAction.CallbackContext ctx)
+    {
+        base.Roll(ctx);
+
+        if (pc.currentRollCooldownTimer > 0) return;
+
+        if (ctx.performed) sm.ChangeState(new PlayerRollState(sm, pc));
+    }
 }

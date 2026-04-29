@@ -28,4 +28,13 @@ public class PlayerJumpState : PlayerState
     {
         pc.moveDir = ctx.ReadValue<Vector2>();
     }
+
+    public override void Roll(InputAction.CallbackContext ctx)
+    {
+        base.Roll(ctx);
+
+        if (pc.currentRollCooldownTimer > 0) return;
+
+        if (ctx.performed) sm.ChangeState(new PlayerRollState(sm, pc));
+    }
 }
