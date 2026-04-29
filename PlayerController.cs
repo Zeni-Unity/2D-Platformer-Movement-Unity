@@ -1,6 +1,3 @@
-using System;
-using System.Globalization;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -27,17 +24,17 @@ public class PlayerController : MonoBehaviour
     [field: SerializeField] public Vector2 wallJumpPower { get; private set; } = new Vector2(8f, 16f);
 
     [HideInInspector] public bool canFlip = true;
-    public bool isWallJumping;
-    public float wallJumpDir;
-    public float wallJumpCounter;
-    public bool isGrounded { get; private set; }
-    public bool isOnWall { get; private set; }
-    public Rigidbody2D rb { get; private set; }
-    public Animator animator { get; private set; }
-    public Vector2 moveDir;
-    public bool isSprinting;
-    public bool isWallSliding;
-    public bool _facingRight = true;
+    [HideInInspector] public bool isWallJumping;
+    [HideInInspector] public float wallJumpDir;
+    [HideInInspector] public float wallJumpCounter;
+    [HideInInspector] public bool isGrounded { get; private set; }
+    [HideInInspector] public bool isOnWall { get; private set; }
+    [HideInInspector] public Rigidbody2D rb { get; private set; }
+    [HideInInspector] public Animator animator { get; private set; }
+    [HideInInspector] public Vector2 moveDir;
+    [HideInInspector] public bool isSprinting;
+    [HideInInspector] public bool isWallSliding;
+    [HideInInspector] public bool _facingRight = true;
 
 
     void Awake()

@@ -65,7 +65,7 @@ public class PlayerWallSlideState : PlayerState
     public override void WallJump(InputAction.CallbackContext ctx)
     {
         base.WallJump(ctx);
-
+        if (!pc.isOnWall) return;
         if (ctx.performed) sm.ChangeState(new PlayerWallJumpState(sm, pc));
     }
 

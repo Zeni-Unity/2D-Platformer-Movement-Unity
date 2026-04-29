@@ -41,7 +41,7 @@ public class PlayerRunState : PlayerState
     public override void Jump(InputAction.CallbackContext ctx)
     {
         base.Jump(ctx);
-
+        if (!pc.isGrounded) return;
         if (ctx.performed) sm.ChangeState(new PlayerJumpState(sm, pc));
     }
 }

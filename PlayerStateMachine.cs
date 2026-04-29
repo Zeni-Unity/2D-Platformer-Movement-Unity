@@ -37,12 +37,10 @@ public class PlayerStateMachine : MonoBehaviour
     public void Move(InputAction.CallbackContext ctx) => _currentState?.Move(ctx);
     public void Jump(InputAction.CallbackContext ctx)
     {
-        if (!pc.isGrounded) return;
         _currentState?.Jump(ctx);
     }
     public void WallJump(InputAction.CallbackContext ctx)
     {
-        if (!pc.isOnWall) return;
         _currentState?.WallJump(ctx);
     }
     public void Sprint(InputAction.CallbackContext ctx)

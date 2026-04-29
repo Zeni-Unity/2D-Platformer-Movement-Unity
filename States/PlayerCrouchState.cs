@@ -33,7 +33,7 @@ public class PlayerCrouchState : PlayerState
     public override void Jump(InputAction.CallbackContext ctx)
     {
         base.Jump(ctx);
-
+        if (!pc.isGrounded) return;
         if (ctx.performed) sm.ChangeState(new PlayerIdleState(sm, pc));
     }
 
