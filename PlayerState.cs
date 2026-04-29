@@ -15,4 +15,6 @@ public class PlayerState
     virtual public void Jump(InputAction.CallbackContext ctx) { }
     virtual public void WallJump(InputAction.CallbackContext ctx) { }
     virtual public void Sprint(InputAction.CallbackContext ctx) { }
+    virtual public void Crouch(InputAction.CallbackContext ctx) { }
+    virtual public void Roll(InputAction.CallbackContext ctx) { }
 }

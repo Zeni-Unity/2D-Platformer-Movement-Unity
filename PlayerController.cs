@@ -5,36 +5,40 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header("Ground Check")]
     [SerializeField] private float groundRadius;
     [SerializeField] private Transform groundCheckPos;
     [SerializeField] private LayerMask groundLayer;
 
+    [Header("Wall Check")]
     [SerializeField] private float wallRadius;
     [SerializeField] private Transform wallCheckPos;
     [SerializeField] private LayerMask wallLayer;
 
-    [HideInInspector] public bool canFlip = true;
+    [field: Header("Movement Settings")]
     [field: SerializeField] public float walkSpeed { get; private set; }
     [field: SerializeField] public float runSpeed { get; private set; }
     [field: SerializeField] public float jumpForce { get; private set; }
     [field: SerializeField] public float wallSlideSpeed { get; private set; }
-    public bool isWallJumping;
-    public float wallJumpDir;
+
+    [field: Header("Wall Jump Settings")]
     [field: SerializeField] public float wallJumpTime { get; private set; } = 0.2f;
-    public float wallJumpCounter;
     [field: SerializeField] public float wallJumpDuration { get; private set; } = 0.4f;
     [field: SerializeField] public Vector2 wallJumpPower { get; private set; } = new Vector2(8f, 16f);
+
+    [HideInInspector] public bool canFlip = true;
+    public bool isWallJumping;
+    public float wallJumpDir;
+    public float wallJumpCounter;
     public bool isGrounded { get; private set; }
     public bool isOnWall { get; private set; }
-
     public Rigidbody2D rb { get; private set; }
     public Animator animator { get; private set; }
-
     public Vector2 moveDir;
     public bool isSprinting;
     public bool isWallSliding;
-
     public bool _facingRight = true;
+
 
     void Awake()
     {
@@ -57,7 +61,7 @@ public class PlayerController : MonoBehaviour
 
         if (!isWallSliding)
         {
-            wallJumpCounter -= Time.deltaTime;
+            wallJumpCounter = Mathf.Max(0f, wallJumpCounter - Time.deltaTime);
         }
     }
 
@@ -67,8 +71,6 @@ public class PlayerController : MonoBehaviour
         Collider2D wallHits = Physics2D.OverlapCircle(wallCheckPos.position, wallRadius, wallLayer);
         isGrounded = groundHits != null;
         isOnWall = wallHits != null;
-
-        Debug.Log("[Checking Wall] > " + wallHits != null);
     }
 
     void Flip()

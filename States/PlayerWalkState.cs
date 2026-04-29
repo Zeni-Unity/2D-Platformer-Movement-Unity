@@ -45,4 +45,11 @@ public class PlayerWalkState : PlayerState
 
         if (ctx.performed) sm.ChangeState(new PlayerJumpState(sm, pc));
     }
+
+    public override void Crouch(InputAction.CallbackContext ctx)
+    {
+        base.Crouch(ctx);
+
+        if (ctx.performed) sm.ChangeState(new PlayerCrouchState(sm, pc));
+    }
 }

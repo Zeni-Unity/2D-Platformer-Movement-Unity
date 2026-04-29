@@ -1,3 +1,4 @@
+using System;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -35,17 +36,20 @@ public class PlayerWallSlideState : PlayerState
             return;
         }
 
-        if (pc._facingRight && pc.moveDir.x < -0.1f)
+        if (pc.isWallSliding)
         {
-            pc.isWallSliding = false;
-            sm.ChangeState(new PlayerIdleState(sm, pc));
-            return;
-        }
-        else if (!pc._facingRight && pc.moveDir.x > 0.1f)
-        {
-            pc.isWallSliding = false;
-            sm.ChangeState(new PlayerIdleState(sm, pc));
-            return;
+            if (pc._facingRight && pc.moveDir.x < -0.1f)
+            {
+                pc.isWallSliding = false;
+                sm.ChangeState(new PlayerIdleState(sm, pc));
+                return;
+            }
+            else if (!pc._facingRight && pc.moveDir.x > 0.1f)
+            {
+                pc.isWallSliding = false;
+                sm.ChangeState(new PlayerIdleState(sm, pc));
+                return;
+            }
         }
     }
 
@@ -55,6 +59,7 @@ public class PlayerWallSlideState : PlayerState
 
         pc.rb.gravityScale = gravityScale;
         pc.animator.SetBool("isWallSliding", false);
+        pc.isWallSliding = false;
     }
 
     public override void WallJump(InputAction.CallbackContext ctx)

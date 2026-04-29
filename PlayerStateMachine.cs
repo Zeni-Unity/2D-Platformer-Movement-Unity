@@ -51,4 +51,7 @@ public class PlayerStateMachine : MonoBehaviour
         else if (ctx.canceled) pc.isSprinting = false;
         _currentState?.Sprint(ctx);
     }
+
+    public void Crouch(InputAction.CallbackContext ctx) => _currentState?.Crouch(ctx);
+    public void Roll(InputAction.CallbackContext ctx) => _currentState?.Roll(ctx);
 }
