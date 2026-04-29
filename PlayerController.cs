@@ -2,6 +2,10 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    [field: SerializeField, Tooltip("If enabled, roll is used as a dash with ghost frames.")] public bool useRollAsDash { get; private set; } = false;
+    [field: SerializeField] public float ghostFrameStartOpacity { get; private set; } = 0.5f;
+    [field: SerializeField] public float ghostFrameDeathTime { get; private set; } = 0.25f;
+    [field: SerializeField] public float ghostFrameSpawnTime { get; private set; } = 0.05f;
     [Header("Ground Check")]
     [SerializeField] private float groundRadius;
     [SerializeField] private Transform groundCheckPos;

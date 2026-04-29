@@ -1,10 +1,15 @@
 using System.Collections;
+using NUnit.Framework.Constraints;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerRollState : PlayerState
 {
     public PlayerRollState(PlayerStateMachine _sm, PlayerController _pc) : base(_sm, _pc) { }
+
+    private bool isRolling = false;
+    private float currentGhostFrameSpawnTime;
 
     public override void Enter()
     {
@@ -15,8 +20,28 @@ public class PlayerRollState : PlayerState
         pc.StartCoroutine(Roll(rollDir));
     }
 
+    public override void Update()
+    {
+        base.Update();
+
+        if (isRolling && pc.useRollAsDash)
+        {
+            if (currentGhostFrameSpawnTime > 0)
+            {
+                currentGhostFrameSpawnTime -= Time.deltaTime;
+            }
+            else
+            {
+                NewGhostFrame();
+                currentGhostFrameSpawnTime = pc.ghostFrameSpawnTime;
+            }
+        }
+    }
+
     IEnumerator Roll(Vector2 dir)
     {
+        isRolling = true;
+        currentGhostFrameSpawnTime = pc.ghostFrameSpawnTime;
         float ogGravity = pc.rb.gravityScale;
         pc.rb.gravityScale = 0f;
         pc.rb.linearVelocity = Vector2.zero;
@@ -29,7 +54,27 @@ public class PlayerRollState : PlayerState
 
         sm.ChangeState(new PlayerIdleState(sm, pc));
         pc.animator.SetBool("isRolling", false);
+        isRolling = false;
         yield return null;
+    }
+
+    private void NewGhostFrame()
+    {
+        GameObject frame = new GameObject("Ghost frame");
+
+        frame.transform.position = pc.gameObject.transform.position;
+        frame.transform.localScale = pc.gameObject.transform.localScale;
+
+        SpriteRenderer sr = frame.AddComponent<SpriteRenderer>();
+        sr.sprite = pc.gameObject.GetComponent<SpriteRenderer>().sprite;
+
+        Color color = sr.color;
+        color.a = pc.ghostFrameStartOpacity;
+        sr.color = color;
+
+        GhostFrame ghostFrame = frame.AddComponent<GhostFrame>();
+        ghostFrame.deathTime = pc.ghostFrameDeathTime;
+        ghostFrame.enableDeathTime = true;
     }
 
     public override void Exit()
