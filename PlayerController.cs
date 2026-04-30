@@ -17,9 +17,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform wallCheckPos;
     [SerializeField] private LayerMask wallLayer;
 
+    [Header("Climb Check")]
+    [SerializeField] private float climbRadius;
+    [SerializeField] private Transform climbCheckPos;
+    [SerializeField] private LayerMask climbLayer;
+
     [field: Header("Movement Settings")]
     [field: SerializeField, Tooltip("Horizontal movement speed while walking.")] public float walkSpeed { get; private set; } = 7f;
     [field: SerializeField, Tooltip("Horizontal movement speed while sprinting.")] public float runSpeed { get; private set; } = 12f;
+    [field: SerializeField, Tooltip("Vertical climb speed while climbing.")] public float climbSpeed { get; private set; } = 5f;
     [field: SerializeField, Tooltip("Upward velocity applied instantly when jumping.")] public float jumpForce { get; private set; } = 25f;
     [field: SerializeField, Tooltip("Gravity scale applied while wall sliding (lower = slower slide).")] public float wallSlideSpeed { get; private set; } = 0.15f;
     [field: SerializeField, Tooltip("Impulse force applied when rolling on the ground.")] public float rollGroundSpeed { get; private set; } = 15f;
@@ -61,7 +67,8 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public float currentRollCooldownTimer;
     [HideInInspector] public float currentCoyoteTime;
     [HideInInspector] public float currentJumpBufferTime;
-    [HideInInspector] public float baseGravityScale { get; private set; }
+    public float baseGravityScale { get; private set; }
+    public bool canClimb { get; private set; }
 
 
     void Awake()
@@ -82,6 +89,7 @@ public class PlayerController : MonoBehaviour
         bool wasGrounded = isGrounded;
 
         GroundWallCheck();
+        ClimbCheck();
 
         if (wasGrounded && !isGrounded) currentCoyoteTime = coyoteTime;
 
@@ -108,6 +116,12 @@ public class PlayerController : MonoBehaviour
         isOnWall = wallHits != null;
     }
 
+    void ClimbCheck()
+    {
+        Collider2D hit = Physics2D.OverlapCircle(climbCheckPos.position, climbRadius, climbLayer);
+        canClimb = hit != null;
+    }
+
     void Flip()
     {
         _facingRight = !_facingRight;
@@ -124,5 +138,8 @@ public class PlayerController : MonoBehaviour
 
         Gizmos.color = isOnWall ? Color.green : Color.red;
         Gizmos.DrawWireSphere(wallCheckPos.position, wallRadius);
+
+        Gizmos.color = canClimb ? Color.green : Color.red;
+        Gizmos.DrawWireSphere(climbCheckPos.position, climbRadius);
     }
 }

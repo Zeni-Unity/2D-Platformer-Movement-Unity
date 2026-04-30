@@ -17,4 +17,5 @@ public class PlayerState
     virtual public void Sprint(InputAction.CallbackContext ctx) { }
     virtual public void Crouch(InputAction.CallbackContext ctx) { }
     virtual public void Roll(InputAction.CallbackContext ctx) { }
+    virtual public void Climb(InputAction.CallbackContext ctx) { }
 }

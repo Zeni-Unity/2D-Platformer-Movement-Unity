@@ -4,7 +4,7 @@ using UnityEngine;
 public class GhostFrame : MonoBehaviour
 {
     public float deathTime = 0.25f;
-    [HideInInspector] public bool enableDeathTime = false;
+    public bool enableDeathTime = false;
     private SpriteRenderer spriteRenderer;
 
     void Awake()

@@ -76,4 +76,11 @@ public class PlayerWalkState : PlayerState
 
         if (ctx.performed) sm.ChangeState(sm.RollState);
     }
+
+    public override void Climb(InputAction.CallbackContext ctx)
+    {
+        base.Climb(ctx);
+
+        if (ctx.performed && pc.canClimb) sm.ChangeState(sm.ClimbState);
+    }
 }

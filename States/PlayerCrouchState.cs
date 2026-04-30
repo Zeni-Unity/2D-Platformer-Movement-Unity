@@ -23,6 +23,7 @@ public class PlayerCrouchState : PlayerState
     {
         base.Exit();
         pc.animator.SetBool("isCrouching", false);
+        pc.animator.SetBool("isCrouchingWalking", false);
     }
 
     public override void Move(InputAction.CallbackContext ctx)

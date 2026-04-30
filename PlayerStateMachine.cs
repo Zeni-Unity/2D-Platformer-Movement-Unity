@@ -16,6 +16,7 @@ public class PlayerStateMachine : MonoBehaviour
     public PlayerWallJumpState WallJumpState { get; private set; }
     public PlayerCrouchState CrouchState { get; private set; }
     public PlayerRollState RollState { get; private set; }
+    public PlayerClimbState ClimbState { get; private set; }
 
     void Awake()
     {
@@ -29,6 +30,7 @@ public class PlayerStateMachine : MonoBehaviour
         WallJumpState = new PlayerWallJumpState(this, pc);
         CrouchState = new PlayerCrouchState(this, pc);
         RollState = new PlayerRollState(this, pc);
+        ClimbState = new PlayerClimbState(this, pc);
     }
 
     void Start()
@@ -73,4 +75,5 @@ public class PlayerStateMachine : MonoBehaviour
 
     public void Crouch(InputAction.CallbackContext ctx) => _currentState?.Crouch(ctx);
     public void Roll(InputAction.CallbackContext ctx) => _currentState?.Roll(ctx);
+    public void Climb(InputAction.CallbackContext ctx) => _currentState?.Climb(ctx);
 }
