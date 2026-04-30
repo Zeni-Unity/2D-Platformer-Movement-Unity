@@ -15,14 +15,11 @@ public class PlayerRunState : PlayerState
     {
         base.Update();
 
-        if (Vector2.Distance(pc.moveDir, Vector2.zero) < 0.01f) { sm.ChangeState(sm.IdleState); }
-        if (!pc.isSprinting) { sm.ChangeState(sm.IdleState); }
+        if (Vector2.Distance(pc.moveDir, Vector2.zero) < 0.01f) sm.ChangeState(sm.IdleState);
+        if (!pc.isSprinting) sm.ChangeState(sm.WalkState);
         if (pc.isOnWall && !pc.isGrounded) sm.ChangeState(sm.WallSlideState);
 
-        if (pc.isGrounded && pc.currentJumpBufferTime > 0)
-        {
-            sm.ChangeState(sm.JumpState);
-        }
+        if (pc.canJump && pc.currentJumpBufferTime > 0) sm.ChangeState(sm.JumpState);
     }
 
     public override void FixedUpdate()
@@ -38,8 +35,9 @@ public class PlayerRunState : PlayerState
         if (isTurning) accel *= pc.turnAccelMultiplier;
 
         float newSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, accel * Time.fixedDeltaTime);
-
         pc.rb.linearVelocity = new Vector2(newSpeed, pc.rb.linearVelocity.y);
+
+        if (pc.canJump && pc.currentJumpBufferTime > 0) sm.ChangeState(sm.JumpState);
     }
 
     public override void Exit()
@@ -60,19 +58,22 @@ public class PlayerRunState : PlayerState
         if (ctx.performed) sm.ChangeState(sm.JumpState);
     }
 
+    public override void WallJump(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed && pc.wallJumpCounter > 0)
+            sm.ChangeState(sm.WallJumpState);
+    }
+
     public override void Roll(InputAction.CallbackContext ctx)
     {
         base.Roll(ctx);
-
         if (pc.currentRollCooldownTimer > 0) return;
-
         if (ctx.performed) sm.ChangeState(sm.RollState);
     }
 
     public override void Climb(InputAction.CallbackContext ctx)
     {
         base.Climb(ctx);
-
         if (ctx.performed && pc.canClimb) sm.ChangeState(sm.ClimbState);
     }
 }

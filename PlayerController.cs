@@ -67,6 +67,7 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public float currentRollCooldownTimer;
     [HideInInspector] public float currentCoyoteTime;
     [HideInInspector] public float currentJumpBufferTime;
+    public bool isJumpHeld;
     public float baseGravityScale { get; private set; }
     public bool canClimb { get; private set; }
 

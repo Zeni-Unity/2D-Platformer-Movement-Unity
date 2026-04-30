@@ -1,4 +1,3 @@
-using UnityEditor.Callbacks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,10 +11,21 @@ public class PlayerCrouchState : PlayerState
         pc.animator.SetBool("isCrouching", true);
     }
 
+    public override void Update()
+    {
+        base.Update();
+
+        if (!pc.isGrounded)
+        {
+            sm.ChangeState(sm.IdleState);
+            return;
+        }
+    }
+
     public override void FixedUpdate()
     {
         base.FixedUpdate();
-        pc.animator.SetBool("isCrouchingWalking", pc.rb.linearVelocity.x != 0);
+        pc.animator.SetBool("isCrouchingWalking", pc.rb.linearVelocity.x > 0.1f || pc.rb.linearVelocity.x < -0.1f);
         pc.rb.linearVelocity = new Vector2(pc.moveDir.x * pc.walkSpeed, pc.rb.linearVelocity.y);
     }
 
@@ -41,16 +51,13 @@ public class PlayerCrouchState : PlayerState
     public override void Crouch(InputAction.CallbackContext ctx)
     {
         base.Crouch(ctx);
-
         if (ctx.performed) sm.ChangeState(sm.IdleState);
     }
 
     public override void Roll(InputAction.CallbackContext ctx)
     {
         base.Roll(ctx);
-
         if (pc.currentRollCooldownTimer > 0) return;
-
         if (ctx.performed) sm.ChangeState(sm.RollState);
     }
 }

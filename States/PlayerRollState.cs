@@ -1,6 +1,4 @@
 using System.Collections;
-using NUnit.Framework.Constraints;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,13 +8,19 @@ public class PlayerRollState : PlayerState
 
     private bool isRolling = false;
     private float currentGhostFrameSpawnTime;
+    private bool _wasExitedExternally = false;
 
     public override void Enter()
     {
         base.Enter();
 
+        _wasExitedExternally = false;
         pc.animator.SetBool("isRolling", true);
-        Vector2 rollDir = pc.moveDir == Vector2.zero || pc.moveDir.x == 0 ? pc._facingRight ? Vector2.right : Vector2.left : pc.isGrounded ? new Vector2(pc.moveDir.x, pc.rb.linearVelocity.y) : pc.moveDir;
+        Vector2 rollDir = pc.moveDir == Vector2.zero || pc.moveDir.x == 0
+            ? pc._facingRight ? Vector2.right : Vector2.left
+            : pc.isGrounded
+                ? new Vector2(pc.moveDir.x, pc.rb.linearVelocity.y)
+                : pc.moveDir;
         pc.StartCoroutine(Roll(rollDir));
     }
 
@@ -51,17 +55,18 @@ public class PlayerRollState : PlayerState
         yield return new WaitForSeconds(pc.isGrounded ? pc.rollGroundTime : pc.rollAirTime);
 
         pc.rb.gravityScale = ogGravity;
-
-        sm.ChangeState(sm.IdleState);
-        pc.animator.SetBool("isRolling", false);
         isRolling = false;
-        yield return null;
+
+        if (!_wasExitedExternally)
+        {
+            pc.animator.SetBool("isRolling", false);
+            sm.ChangeState(sm.IdleState);
+        }
     }
 
     private void NewGhostFrame()
     {
         GameObject frame = new GameObject("Ghost frame");
-
         frame.transform.position = pc.gameObject.transform.position;
         frame.transform.localScale = pc.gameObject.transform.localScale;
 
@@ -80,6 +85,8 @@ public class PlayerRollState : PlayerState
     public override void Exit()
     {
         base.Exit();
+        _wasExitedExternally = true;
+        isRolling = false;
         pc.animator.SetBool("isRolling", false);
         pc.currentRollCooldownTimer = pc.rollCooldown;
     }

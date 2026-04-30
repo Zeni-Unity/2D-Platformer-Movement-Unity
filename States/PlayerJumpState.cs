@@ -5,11 +5,16 @@ public class PlayerJumpState : PlayerState
 {
     public PlayerJumpState(PlayerStateMachine _sm, PlayerController _pc) : base(_sm, _pc) { }
 
+    private bool _jumpCutApplied;
+    private bool _hasLeftGround;
+
     public override void Enter()
     {
         base.Enter();
         pc.currentJumpBufferTime = -1f;
         pc.currentCoyoteTime = -1f;
+        _jumpCutApplied = false;
+        _hasLeftGround = false;
         pc.rb.linearVelocity = new Vector2(pc.rb.linearVelocity.x, pc.jumpForce);
     }
 
@@ -17,7 +22,9 @@ public class PlayerJumpState : PlayerState
     {
         base.Update();
 
-        if (pc.isGrounded) sm.ChangeState(sm.IdleState);
+        if (!pc.isGrounded) _hasLeftGround = true;
+
+        if (_hasLeftGround && pc.isGrounded) sm.ChangeState(sm.IdleState);
         if (pc.isOnWall && !pc.isGrounded) sm.ChangeState(sm.WallSlideState);
     }
 
@@ -25,9 +32,22 @@ public class PlayerJumpState : PlayerState
     {
         base.FixedUpdate();
 
+        if (!pc.isJumpHeld && !_jumpCutApplied && _hasLeftGround && pc.rb.linearVelocity.y > 0.01f)
+        {
+            _jumpCutApplied = true;
+            Vector2 newVel = pc.rb.linearVelocity;
+            newVel.y *= pc.jumpCutMultiplier;
+            pc.rb.linearVelocity = newVel;
+        }
+
         float currentSpeed = pc.rb.linearVelocity.x;
         float targetSpeed = pc.moveDir.x * (pc.isSprinting ? pc.runSpeed : pc.walkSpeed);
-        float accel = Mathf.Sign(targetSpeed) != Mathf.Sign(currentSpeed) && targetSpeed != 0f ? pc.acceleration * pc.turnAccelMultiplier : pc.acceleration;
+
+        float accel;
+        if (targetSpeed == 0f) accel = pc.deceleration;
+        else if (Mathf.Sign(targetSpeed) != Mathf.Sign(currentSpeed) && currentSpeed != 0f) accel = pc.acceleration * pc.turnAccelMultiplier;
+        else accel = pc.acceleration;
+
         float newSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, accel * Time.fixedDeltaTime);
         pc.rb.linearVelocity = new Vector2(newSpeed, pc.rb.linearVelocity.y);
 
@@ -53,26 +73,23 @@ public class PlayerJumpState : PlayerState
     public override void Jump(InputAction.CallbackContext ctx)
     {
         base.Jump(ctx);
-
-        if (ctx.canceled && pc.rb.linearVelocity.y > 0f)
-        {
-            pc.rb.linearVelocity = new Vector2(pc.rb.linearVelocity.x, pc.rb.linearVelocity.y * pc.jumpCutMultiplier);
-        }
     }
 
     public override void Roll(InputAction.CallbackContext ctx)
     {
         base.Roll(ctx);
-
         if (pc.currentRollCooldownTimer > 0) return;
-
         if (ctx.performed) sm.ChangeState(sm.RollState);
     }
 
     public override void Climb(InputAction.CallbackContext ctx)
     {
         base.Climb(ctx);
-
         if (ctx.performed && pc.canClimb) sm.ChangeState(sm.ClimbState);
+    }
+
+    public override void WallJump(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed && pc.wallJumpCounter > 0) sm.ChangeState(sm.WallJumpState);
     }
 }

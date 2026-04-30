@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,6 +13,7 @@ public class PlayerIdleState : PlayerState
     public override void Update()
     {
         base.Update();
+
         if (pc.moveDir.x != 0)
         {
             if (pc.isSprinting) sm.ChangeState(sm.RunState);
@@ -21,13 +21,9 @@ public class PlayerIdleState : PlayerState
         }
 
         bool movingIntoWall = (pc._facingRight && pc.moveDir.x > 0.1f) || (!pc._facingRight && pc.moveDir.x < -0.1f);
-
         if (pc.isOnWall && !pc.isGrounded && movingIntoWall) sm.ChangeState(sm.WallSlideState);
 
-        if (pc.isGrounded && pc.currentJumpBufferTime > 0)
-        {
-            sm.ChangeState(sm.JumpState);
-        }
+        if (pc.canJump && pc.currentJumpBufferTime > 0) sm.ChangeState(sm.JumpState);
     }
 
     public override void FixedUpdate()
@@ -56,26 +52,28 @@ public class PlayerIdleState : PlayerState
         if (ctx.performed) sm.ChangeState(sm.JumpState);
     }
 
+    public override void WallJump(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed && pc.wallJumpCounter > 0)
+            sm.ChangeState(sm.WallJumpState);
+    }
+
     public override void Crouch(InputAction.CallbackContext ctx)
     {
         base.Crouch(ctx);
-
         if (ctx.performed) sm.ChangeState(sm.CrouchState);
     }
 
     public override void Roll(InputAction.CallbackContext ctx)
     {
         base.Roll(ctx);
-
         if (pc.currentRollCooldownTimer > 0) return;
-
         if (ctx.performed) sm.ChangeState(sm.RollState);
     }
 
     public override void Climb(InputAction.CallbackContext ctx)
     {
         base.Climb(ctx);
-
         if (ctx.performed && pc.canClimb) sm.ChangeState(sm.ClimbState);
     }
 }
